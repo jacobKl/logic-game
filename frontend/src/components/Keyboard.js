@@ -8,6 +8,7 @@ const KEYS = {
   w: 87,
   d: 68,
   a: 65,
+  s: 83,
 };
 
 export default class Keyboard {
@@ -28,11 +29,15 @@ export default class Keyboard {
         break;
       case KEYS.left:
       case KEYS.a:
-        Config.rotateLeft = false;
+        Config.moveLeft = false;
         break;
       case KEYS.right:
       case KEYS.d:
-        Config.rotateRight = false;
+        Config.moveRight = false;
+        break;
+      case KEYS.down:
+      case KEYS.s:
+        Config.moveBackward = false;
         break;
     }
   }
@@ -45,11 +50,19 @@ export default class Keyboard {
         break;
       case KEYS.left:
       case KEYS.a:
-        Config.rotateLeft = true;
+        Config.moveLeft = true;
         break;
       case KEYS.right:
       case KEYS.d:
-        Config.rotateRight = true;
+        Config.moveRight = true;
+        break;
+      case KEYS.right:
+      case KEYS.d:
+        Config.moveRight = true;
+        break;
+      case KEYS.down:
+      case KEYS.s:
+        Config.moveBackward = true;
         break;
     }
   }

@@ -3,7 +3,12 @@ const app = express();
 const socket = require("socket.io");
 const session = require("express-session");
 const server = app.listen(3000);
-const io = socket(server);
+const io = socket(server, {
+  cors: {
+    origin: "http://localhost:8080",
+    credentials: true,
+  },
+});
 const { joinRoomHandler } = require("./handlers/joinRoomHandler");
 const { changePlayerData } = require("./handlers/changePlayerData");
 

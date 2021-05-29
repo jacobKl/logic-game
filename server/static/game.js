@@ -3,7 +3,7 @@ const socket = io();
 socket.emit("join");
 
 socket.on("joined", (data) => {
-  socket.on("receiveData", (data) => {
+  socket.on("dataFlow", (data) => {
     alert("DATA FROM SERVERS EMIT");
   });
 });
