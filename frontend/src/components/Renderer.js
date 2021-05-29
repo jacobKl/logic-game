@@ -2,9 +2,9 @@ import { WebGLRenderer } from 'three';
 
 export default class Renderer extends WebGLRenderer {
     constructor(container) {
-        super({ antialias: true })
+        super({ antialias: true });
 
-        this.container = container
+        this.container = container;
 
         this.container.appendChild(this.domElement);
 

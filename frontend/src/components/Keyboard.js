@@ -5,9 +5,9 @@ const KEYS = {
     "up": 38,
     "right": 39,
     "down": 40,
-    "w":87,
-    "d":68,
-    "a":65,
+    "w": 87,
+    "d": 68,
+    "a": 65,
 };
 
 
@@ -15,7 +15,7 @@ export default class Keyboard {
     constructor(domElement, modelMesh) {
 
         this.domElement = domElement;
-        this.modelMesh = modelMesh
+        this.modelMesh = modelMesh;
 
         // events
         this.domElement.addEventListener('keydown', event => this.onKeyDown(event), false);
@@ -46,7 +46,7 @@ export default class Keyboard {
     onKeyDown(event) {
         switch (event.keyCode) {
             case KEYS.up:
-            case KEYS.w:               
+            case KEYS.w:
                 Config.moveForward = true;
                 break;
             case KEYS.left:
