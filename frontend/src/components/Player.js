@@ -15,19 +15,19 @@ export default class Player {
 
       if (Config.moveLeft) {
         this.object.translateX(3);
-        camera.position.set(x, y, z + 10);
+        camera.position.set(x, y + 30, z + 10);
       }
       if (Config.moveRight) {
         this.object.translateX(-3);
-        camera.position.set(x, y, z + 10);
+        camera.position.set(x, y + 30, z + 10);
       }
       if (Config.moveForward) {
         this.object.translateZ(3);
-        camera.position.set(x, y, z + 10);
+        camera.position.set(x, y + 30, z + 10);
       }
       if (Config.moveBackward) {
         this.object.translateZ(-3);
-        camera.position.set(x, y, z + 10);
+        camera.position.set(x, y + 30, z + 10);
       }
 
       if (Config.moveLeft || Config.moveRight || Config.moveForward || Config.moveBackward) {
@@ -47,7 +47,7 @@ export default class Player {
 
           resolve(this.object);
         },
-        () => { },
+        () => {},
         () => {
           reject(new Error("Error while loading model 1"));
         }

@@ -1,31 +1,40 @@
 <!DOCTYPE html>
 <html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+      body {
+        padding: 0;
+        margin: 0 auto;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    <%= htmlWebpackPlugin.options.title %>
-  </title>
-  <style>
-    body {
-      padding: 0;
-      margin: 0 auto;
-    }
+      #info {
+        position: absolute;
+        top: 200px;
+        left: 200px;
+        max-width: 40%;
+        border: 1px solid black;
+      }
 
-    #info {
-      position: absolute;
-      top: 200px;
-      left: 200px;
-      max-width: 40%;
-      border: 1px solid black;
-    }
-  </style>
-</head>
+      .pointer {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        filter: blur(2px);
+      }
+    </style>
+  </head>
 
-<body>
-  <div id="root"></div>
-  <!-- <div id="info"></div> -->
-</body>
-
+  <body>
+    <div id="root"></div>
+    <!-- <div id="info"></div> -->
+    <div class="pointer"></div>
+  </body>
 </html>
