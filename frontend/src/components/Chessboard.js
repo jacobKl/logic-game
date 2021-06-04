@@ -7,17 +7,20 @@ export default class Chessboard {
   constructor(scene) {
     this.scene = scene;
     this.group = new Group();
+    this.pieces = [];
     this.game = new Chess();
 
     const loader = new GLTFLoader();
 
-    this.pieces = [];
     const path = "./src/components/assets/chess/board.gltf";
 
     loader.load(path, (object) => {
       this.model = object.scene;
 
       this.spawnPieces();
+
+      this.group.position.y = 5;
+      this.model.position.y = 5;
 
       this.scene.add(this.group);
       this.scene.add(this.model);

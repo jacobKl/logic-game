@@ -1,9 +1,11 @@
-import { GridHelper, Scene, AmbientLight, Vector3 } from "three";
+import { GridHelper, Scene, Vector3, DirectionalLight, AmbientLight } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import Renderer from "./Renderer";
 import Camera from "./Camera";
 import Keyboard from "./Keyboard";
 import Player from "./Player";
 import ChessBoard from "./Chessboard";
+import Room from "./Room";
 
 export default class Main {
   constructor(container) {
@@ -17,7 +19,10 @@ export default class Main {
     this.gridHelper = new GridHelper(5000);
     this.player = new Player();
     this.enemy = new Player();
-    this.keyboard = new Keyboard(window, this.player);
+    this.room = new Room(this.scene);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    // this.keyboard = new Keyboard(window, this.player);
+
     this.chessboard = new ChessBoard(this.scene);
 
     const firstModel = this.player.loadModel("./src/components/assets/playerModel/scene.gltf");

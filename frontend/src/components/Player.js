@@ -42,9 +42,12 @@ export default class Player {
         path,
         (model) => {
           this.object = model.scene;
+
+          this.object.scale.set(8, 8, 8);
+
           resolve(this.object);
         },
-        () => {},
+        () => { },
         () => {
           reject(new Error("Error while loading model 1"));
         }
