@@ -7,7 +7,7 @@ export default class Renderer extends WebGLRenderer {
     this.container = container;
 
     this.container.appendChild(this.domElement);
-    this.setClearColor(0xf4e7cf);
+    this.setClearColor(0x999999);
 
     // resize
     this.updateSize();

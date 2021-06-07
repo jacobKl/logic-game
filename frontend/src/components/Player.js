@@ -1,37 +1,41 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import Config from "./Config";
+import { Vector3, Raycaster, Ray, AnimationMixer } from "three";
 export default class Player {
   constructor() {
     this.loader = new GLTFLoader();
+    this.raycaster = new Raycaster();
+    this.canMove = true;
   }
 
   updateData() {
-    socket.emit("changePlayerData", this.object.position);
+    const { x, y, z } = this.object.position;
+    const data = { x: x, y: y, z: z, lookAt: this.lookPos, animation: this.animName };
+    socket.emit("changePlayerData", data);
   }
 
   moving(camera) {
     if (this.object) {
-      const { x, y, z } = this.object.position;
+      const camVect = new Vector3(0, 4, 1);
+      this.camPos = camVect.applyMatrix4(this.object.matrixWorld);
+      camera.position.x = this.camPos.x;
+      camera.position.y = this.camPos.y;
+      camera.position.z = this.camPos.z;
 
-      if (Config.moveLeft) {
-        this.object.translateX(3);
-        camera.position.set(x, y + 30, z + 10);
-      }
-      if (Config.moveRight) {
-        this.object.translateX(-3);
-        camera.position.set(x, y + 30, z + 10);
-      }
-      if (Config.moveForward) {
-        this.object.translateZ(3);
-        camera.position.set(x, y + 30, z + 10);
-      }
-      if (Config.moveBackward) {
-        this.object.translateZ(-3);
-        camera.position.set(x, y + 30, z + 10);
-      }
+      // POINT WHERE CAM LOOKS ALWAYS BY Z-AXIS
+      const lookVect = new Vector3(0, this.camPos.y, -200);
+      this.lookPos = lookVect.applyMatrix4(camera.matrixWorld);
+      this.object.lookAt(this.lookPos.x, 40, this.lookPos.z);
+      this.object.position.y = 0;
 
-      if (Config.moveLeft || Config.moveRight || Config.moveForward || Config.moveBackward) {
-        this.updateData();
+      if (!Config.locked) {
+        if (Config.moveForward && this.canMove) {
+          this.animate("Armature|Run");
+          this.object.translateZ(1.5);
+        } else {
+          this.stopAnimate(this.animName);
+          this.animate("Armature|Idle");
+        }
       }
     }
   }
@@ -42,7 +46,8 @@ export default class Player {
         path,
         (model) => {
           this.object = model.scene;
-
+          this.object.animations = model.animations;
+          this.mixer = new AnimationMixer(this.object);
           this.object.scale.set(8, 8, 8);
 
           resolve(this.object);
@@ -53,5 +58,30 @@ export default class Player {
         }
       );
     });
+  }
+
+  updateIntersects(obstacles) {
+    const ray = new Ray(this.object.position, this.object.getWorldDirection(new Vector3()));
+    this.raycaster.ray = ray;
+    this.intersects = this.raycaster.intersectObjects([...obstacles.children]);
+    const walls = this.intersects.filter((item) => item.object.gameType == "wall");
+    const nearby = walls.filter((item) => item.distance < 5);
+    if (nearby.length) this.canMove = false;
+    else this.canMove = true;
+  }
+
+  animate(animName) {
+    this.animName = animName;
+    this.mixer.clipAction(animName).play();
+  }
+
+  stopAnimate(animName) {
+    this.mixer.clipAction(animName).stop();
+  }
+
+  update(delta) {
+    if (this.mixer) {
+      this.mixer.update(delta);
+    }
   }
 }

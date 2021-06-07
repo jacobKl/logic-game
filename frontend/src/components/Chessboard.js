@@ -33,7 +33,6 @@ export default class Chessboard {
 
     // 1, 2, 3, 4, 5, 6, 7, 8
     for (let rankIndex = 0; rankIndex < 8; rankIndex++) {
-
       // a, b, c, d, e, f, g, h
       for (let fileIndex = 0; fileIndex < 8; fileIndex++) {
         const square = board[rankIndex][fileIndex];
@@ -47,5 +46,9 @@ export default class Chessboard {
         }
       }
     }
+  }
+
+  getGroup() {
+    return this.group;
   }
 }

@@ -10,7 +10,6 @@ function init() {
   socket.emit("join");
 
   socket.on("joined", (data) => {
-    console.log(data);
     socket.on("dataFlow", (data) => {
       const enemyData = data;
       main.updateData(enemyData);

@@ -16,4 +16,8 @@ export default class Room {
 
     this.scene.add(this.group);
   }
+
+  getRoomObstacles() {
+    return this.group;
+  }
 }

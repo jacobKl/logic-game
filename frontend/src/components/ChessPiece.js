@@ -13,7 +13,6 @@ export default class ChessPiece {
       this.model.position.y = 0.55;
       this.model.position.x = xPos;
       this.model.position.z = zPos;
-
       group.add(this.model);
     });
   }
