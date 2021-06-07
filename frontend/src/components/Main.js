@@ -1,4 +1,4 @@
-import { GridHelper, Scene, Vector3, AmbientLight, Clock, AxesHelper, CameraHelper, Mesh, BoxGeometry, MeshBasicMaterial } from "three";
+import { GridHelper, Scene, Vector3, AmbientLight, DirectionalLight, Clock, AxesHelper, CameraHelper, Mesh, BoxGeometry, MeshBasicMaterial } from "three";
 import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js";
 import Renderer from "./Renderer";
 import Camera from "./Camera";
@@ -27,6 +27,8 @@ export default class Main {
     this.axes = new AxesHelper(500);
     this.prevAnim = undefined;
     this.dataFlowing = false;
+    this.mouse = new Mouse();
+    this.table = new Table(this.scene);
 
     const firstModel = this.player.loadModel("./src/components/assets/playerModel/scene.gltf");
     const secondModel = this.enemy.loadModel("./src/components/assets/playerModel/scene.gltf");
