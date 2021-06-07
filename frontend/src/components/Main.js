@@ -23,7 +23,6 @@ export default class Main {
     this.room = new Room(this.scene);
     this.clock = new Clock();
     this.keyboard = new Keyboard(window, this.player);
-    this.chessboard = new ChessBoard(this.scene);
     this.axes = new AxesHelper(500);
     this.prevAnim = undefined;
     this.dataFlowing = false;

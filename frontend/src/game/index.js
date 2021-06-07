@@ -1,5 +1,6 @@
 import Main from "../components/Main";
 import { io } from "socket.io-client";
+import Config from "../components/Config";
 
 global.socket = io("http://localhost:3000");
 
@@ -22,9 +23,8 @@ function init() {
       socket.emit("join", username);
       socket.on("joined", (data) => {
         main.turnCamera();
-
+        main.dataFlowing = true;
         socket.on("dataFlow", (data) => {
-          main.dataFlowing = true;
           const enemyData = data;
           main.updateData(enemyData);
         });
