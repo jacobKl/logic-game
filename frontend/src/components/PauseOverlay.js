@@ -11,7 +11,6 @@ export default class PauseOverlay {
 
   init() {
     document.addEventListener("keydown", (e) => {
-      console.log(e.keyCode);
       if (e.keyCode == this.keycode) {
         if (this.locked) {
           Config.locked = false;

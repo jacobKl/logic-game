@@ -1,4 +1,4 @@
-import { GridHelper, Scene, Vector3, AmbientLight, DirectionalLight, Clock, AxesHelper, CameraHelper } from "three";
+import { GridHelper, Scene, Vector3, AmbientLight, Clock, AxesHelper, CameraHelper, Mesh, BoxGeometry, MeshBasicMaterial } from "three";
 import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js";
 import Renderer from "./Renderer";
 import Camera from "./Camera";
@@ -23,15 +23,10 @@ export default class Main {
     this.room = new Room(this.scene);
     this.clock = new Clock();
     this.keyboard = new Keyboard(window, this.player);
-    this.mouse = new Mouse();
-    this.table = new Table(this.scene);
-    this.fps = new FirstPersonControls(this.camera, this.renderer.domElement);
-    this.fps.lookSpeed = 0.3;
-    this.fps.constrainVertical = true;
-    this.fps.verticalMax = Math.PI * 7 / 8;
-    this.fps.verticalMin = Math.PI / 8;
-    this.pauseOverlay = new PauseOverlay(this.fps);
+    this.chessboard = new ChessBoard(this.scene);
+    this.axes = new AxesHelper(500);
     this.prevAnim = undefined;
+    this.dataFlowing = false;
 
     const firstModel = this.player.loadModel("./src/components/assets/playerModel/scene.gltf");
     const secondModel = this.enemy.loadModel("./src/components/assets/playerModel/scene.gltf");
@@ -39,6 +34,16 @@ export default class Main {
       this.init();
       this.render();
     });
+  }
+
+  turnCamera() {
+    this.fps = new FirstPersonControls(this.camera);
+    this.fps.lookSpeed = 0.3;
+    this.fps.constrainVertical = true;
+    this.fps.verticalMax = (Math.PI * 7) / 8;
+    this.fps.verticalMin = Math.PI / 8;
+    this.fpsAdded = true;
+    this.pauseOverlay = new PauseOverlay(this.fps);
   }
 
   init() {
@@ -63,7 +68,7 @@ export default class Main {
     // ENEMY IN X,Y,Z POS
     const { x, y, z, lookAt, animation } = data;
     this.enemy.object.position.set(x, y, z);
-    const vector = new Vector3(lookAt.x, 30, lookAt.z);
+    const vector = new Vector3(lookAt.x, 0, lookAt.z);
     this.enemy.object.lookAt(vector);
     if (this.prevAnim != animation && this.prevAnim) {
       this.enemy.animate(animation);
@@ -76,13 +81,18 @@ export default class Main {
     const delta = this.clock.getDelta();
     this.renderer.render(this.scene, this.camera);
 
-    this.fps.update(delta);
+    if (this.fpsAdded) {
+      this.fps.update(delta);
+    }
 
     this.player.updateIntersects(this.camera, this.room.getRoomObstacles());
     this.player.moving(this.camera);
-    this.player.updateData();
-    this.player.update(delta);
+    if (this.dataFlowing) {
+      this.player.updateData();
+    }
 
+    // ANIMS
+    this.player.update(delta);
     this.enemy.update(delta);
 
     requestAnimationFrame(this.render.bind(this));

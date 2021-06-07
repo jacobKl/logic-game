@@ -1,6 +1,6 @@
 const { obtainFreeRoom } = require("../utils/obtainFreeRoom");
 
-function joinRoomHandler(io) {
+function joinRoomHandler(io, DATA) {
   const socket = this;
   const room = obtainFreeRoom();
   socket.request.session.playerId = rooms[room.id].inGame;
