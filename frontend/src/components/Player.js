@@ -48,11 +48,11 @@ export default class Player {
           this.object = model.scene;
           this.object.animations = model.animations;
           this.mixer = new AnimationMixer(this.object);
-          this.object.scale.set(8, 8, 8);
+          this.object.scale.set(9, 9, 9);
 
           resolve(this.object);
         },
-        () => {},
+        () => { },
         () => {
           reject(new Error("Error while loading model 1"));
         }
@@ -60,9 +60,11 @@ export default class Player {
     });
   }
 
-  updateIntersects(obstacles) {
-    const ray = new Ray(this.object.position, this.object.getWorldDirection(new Vector3()));
+  updateIntersects(camera, obstacles) {
+    const ray = new Ray(camera.position, camera.getWorldDirection(new Vector3()));
     this.raycaster.ray = ray;
+
+    // WALL COLLISION
     this.intersects = this.raycaster.intersectObjects([...obstacles.children]);
     const walls = this.intersects.filter((item) => item.object.gameType == "wall");
     const nearby = walls.filter((item) => item.distance < 5);
