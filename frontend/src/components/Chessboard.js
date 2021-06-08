@@ -46,10 +46,12 @@ export default class Chessboard {
           let zPos = rankIndex - 4 + 0.5;
 
           let piece = new ChessPiece(square.type, square.color, this.group, xPos, zPos);
+          piece.loadModel();
           this.pieces.push(piece);
         }
       }
     }
+    console.log(this.pieces);
   }
 
   moveProxy(mouse, camera) {
@@ -68,8 +70,8 @@ export default class Chessboard {
         return move.includes("=") && /[abcdefgh][18]/.test(this.toSquare);
       });
       let isPossible = this.possible.some(move => move.includes(this.toSquare));
-      if (isPossible && !moveIsCastle) {
-        console.log(`ruch z ${this.fromSquare} do ${this.toSquare}`);
+      if (isPossible && !moveIsCastle && !moveIsPromotion) {
+        console.log(`ruch z ${this.fromSquare} na ${this.toSquare}`);
         this.makeMove(this.fromSquare, this.toSquare);
       } else if (moveIsCastle) {
         switch (this.toSquare) {
@@ -83,8 +85,12 @@ export default class Chessboard {
             this.longCastle();
             break;
         }
-      } else if (moveIsPromotion) {
-        console.log("promocja");
+      } else if (moveIsPromotion && isPossible) {
+        let selectedPiece;
+        while (!/^[QRBNqrbn]$/.test(selectedPiece)) {
+          selectedPiece = prompt("Q - hetman, R - wieża, B - goniec, N - skoczek", "Q").toUpperCase();
+        }
+        this.promotePawn(this.fromSquare, this.toSquare, selectedPiece);
       } else {
         this.fromSquare = null;
         this.toSquare = null;
@@ -94,17 +100,12 @@ export default class Chessboard {
   }
 
   makeMove(from, to) {
-    let selectedPiece = this.pieces.findIndex(piece => {
-      return piece.square == from;
-    });
+    let selectedPiece = this.pieces.findIndex(piece => { return piece.square == from; });
     this.game.move({ from: from, to: to });
     let history = this.game.history();
     let lastMove = history[history.length - 1];
-    console.log(lastMove);
     if (lastMove.includes("x")) {
-      let takenPiece = this.pieces.findIndex(piece => {
-        return piece.square == to;
-      });
+      let takenPiece = this.pieces.findIndex(piece => { return piece.square == to; });
       console.log(this.pieces[takenPiece]);
       if (!this.pieces[takenPiece]) {
         let enpassant;
@@ -117,13 +118,9 @@ export default class Chessboard {
             enpassant = to[0] + (parseInt(to[1]) - 1);
             break;
         }
-        console.log(enpassant);
-        takenPiece = this.pieces.findIndex(piece => {
-          return piece.square == enpassant;
-        });
+        takenPiece = this.pieces.findIndex(piece => { return piece.square == enpassant; });
       }
       this.pieces[takenPiece].hide();
-      this.pieces[takenPiece].square = null;
     }
     this.pieces[selectedPiece].square = to;
     this.fromSquare = null;
@@ -131,6 +128,47 @@ export default class Chessboard {
     this.possible = null;
     console.log(this.game.ascii());
     this.updatePieces();
+  }
+
+  promotePawn(from, to, pieceToPromoteTo) {
+    let selectedPiece = this.pieces.findIndex(piece => { return piece.square == from; });
+    let promotionSquare = this.pieces.findIndex(piece => { return piece.square == to; });
+
+    let color = this.game.turn();
+    if (this.pieces[promotionSquare] == null) {
+      this.game.move(`${to}=${pieceToPromoteTo}`);
+      this.pieces[selectedPiece].hide();
+      let newPiece = new ChessPiece(pieceToPromoteTo, color, this.group, 0, 0);
+      newPiece.loadModel().then(() => {
+        newPiece.square = to;
+        this.pieces.push(newPiece);
+        this.fromSquare = null;
+        this.toSquare = null;
+        this.possible = null;
+        console.log(this.game.ascii());
+        this.updatePieces();
+      })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      this.pieces[selectedPiece].hide();
+      this.pieces[promotionSquare].hide();
+      this.game.move(`${from[0]}x${to}=${pieceToPromoteTo}`);
+      let newPiece = new ChessPiece(pieceToPromoteTo, color, this.group, 0, 0);
+      newPiece.loadModel().then(() => {
+        newPiece.square = to;
+        this.pieces.push(newPiece);
+        this.fromSquare = null;
+        this.toSquare = null;
+        this.possible = null;
+        console.log(this.game.ascii());
+        this.updatePieces();
+      })
+        .catch(err => {
+          console.error(err);
+        });
+    }
   }
 
   shortCastle() {

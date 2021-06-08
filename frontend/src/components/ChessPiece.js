@@ -4,6 +4,7 @@ export default class ChessPiece {
   constructor(type, color, group, xPos, zPos) {
     this.type = type;
     this.color = color;
+    this.group = group;
     let x = 8 - (xPos + 4.5);
     let z = 8 - (zPos + 4.5);
     let file;
@@ -21,14 +22,24 @@ export default class ChessPiece {
     let square = file + (z + 1);
     this.square = square;
 
-    const loader = new GLTFLoader();
-    const path = `./src/components/assets/chess/${this.color + this.type}.gltf`;
+    this.loader = new GLTFLoader();
+    this.path = `./src/components/assets/chess/${this.color + this.type}.gltf`;
+  }
 
-    loader.load(path, (model) => {
-      this.model = model.scene;
-      this.model.position.y = 0.55;
-      this.setPosition(square);
-      group.add(this.model);
+  loadModel() {
+    return new Promise((resolve, reject) => {
+      this.loader.load(this.path, (model) => {
+        this.model = model.scene;
+        this.model.position.y = 0.55;
+        this.setPosition(this.square);
+        this.group.add(this.model);
+
+        resolve(this.model);
+      },
+        () => { },
+        () => {
+          reject(new Error("Error while loading piece model"));
+        });
     });
   }
 
@@ -41,20 +52,23 @@ export default class ChessPiece {
     let file = square[0];
     let rank = parseInt(square[1]);
 
-    this.model.position.z = 8 - rank - 3.5;
-    switch (file) {
-      case "a": this.model.position.x = 0 - 3.5; break;
-      case "b": this.model.position.x = 1 - 3.5; break;
-      case "c": this.model.position.x = 2 - 3.5; break;
-      case "d": this.model.position.x = 3 - 3.5; break;
-      case "e": this.model.position.x = 4 - 3.5; break;
-      case "f": this.model.position.x = 5 - 3.5; break;
-      case "g": this.model.position.x = 6 - 3.5; break;
-      case "h": this.model.position.x = 7 - 3.5; break;
+    if (this.model) {
+      this.model.position.z = 8 - rank - 3.5;
+      switch (file) {
+        case "a": this.model.position.x = 0 - 3.5; break;
+        case "b": this.model.position.x = 1 - 3.5; break;
+        case "c": this.model.position.x = 2 - 3.5; break;
+        case "d": this.model.position.x = 3 - 3.5; break;
+        case "e": this.model.position.x = 4 - 3.5; break;
+        case "f": this.model.position.x = 5 - 3.5; break;
+        case "g": this.model.position.x = 6 - 3.5; break;
+        case "h": this.model.position.x = 7 - 3.5; break;
+      }
     }
   }
 
   hide() {
     this.model.visible = false;
+    this.square = null;
   }
 }
