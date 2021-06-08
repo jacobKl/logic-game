@@ -39,7 +39,7 @@ export default class Main {
 
   turnCamera() {
     this.fps = new FirstPersonControls(this.camera);
-    this.fps.lookSpeed = 0.3;
+    this.fps.lookSpeed = 0.2;
     this.fps.constrainVertical = true;
     this.fps.verticalMax = (Math.PI * 7) / 8;
     this.fps.verticalMin = Math.PI / 8;

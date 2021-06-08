@@ -31,7 +31,7 @@ export default class Player {
       if (!Config.locked) {
         if (Config.moveForward && this.canMove) {
           this.animate("Armature|Run");
-          this.object.translateZ(1.5);
+          this.object.translateZ(1);
         } else {
           this.stopAnimate(this.animName);
           this.animate("Armature|Idle");

@@ -1,5 +1,5 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { GridHelper, Group } from "three";
+import { Group } from "three";
 import Chess from "chess.js";
 import ChessPiece from "./ChessPiece";
 
@@ -11,6 +11,7 @@ export default class Chessboard {
     this.game = new Chess();
     this.fromSquare = null;
     this.toSquare = null;
+    this.possible = null;
 
     const loader = new GLTFLoader();
 
@@ -54,11 +55,41 @@ export default class Chessboard {
   moveProxy(mouse, camera) {
     if (this.fromSquare == null) {
       this.fromSquare = mouse.getSquare(camera, this.getChessboardModel());
+      this.possible = this.game.moves({ square: this.fromSquare });
+      console.log(this.possible);
     } else if (this.toSquare == null) {
       this.toSquare = mouse.getSquare(camera, this.getChessboardModel());
     }
     if (this.fromSquare != null && this.toSquare != null) {
-      this.makeMove(this.fromSquare, this.toSquare);
+      let moveIsCastle = this.possible.some(move => {
+        return move.includes("O-O") && (this.toSquare == "g1" || this.toSquare == "c1" || this.toSquare == "g8" || this.toSquare == "c8");
+      });
+      let moveIsPromotion = this.possible.some(move => {
+        return move.includes("=") && /[abcdefgh][18]/.test(this.toSquare);
+      });
+      let isPossible = this.possible.some(move => move.includes(this.toSquare));
+      if (isPossible && !moveIsCastle) {
+        console.log(`ruch z ${this.fromSquare} do ${this.toSquare}`);
+        this.makeMove(this.fromSquare, this.toSquare);
+      } else if (moveIsCastle) {
+        switch (this.toSquare) {
+          case "g1":
+          case "g8":
+            this.shortCastle();
+            break;
+
+          case "c1":
+          case "c8":
+            this.longCastle();
+            break;
+        }
+      } else if (moveIsPromotion) {
+        console.log("promocja");
+      } else {
+        this.fromSquare = null;
+        this.toSquare = null;
+        this.possible = null;
+      }
     }
   }
 
@@ -66,14 +97,108 @@ export default class Chessboard {
     let selectedPiece = this.pieces.findIndex(piece => {
       return piece.square == from;
     });
-    let possible = this.game.moves({ square: from });
-    console.log(possible);
-    if (possible.some(move => move.includes(to))) {
-      this.game.move({ from: from, to: to });
-      this.pieces[selectedPiece].square = to;
+    this.game.move({ from: from, to: to });
+    let history = this.game.history();
+    let lastMove = history[history.length - 1];
+    console.log(lastMove);
+    if (lastMove.includes("x")) {
+      let takenPiece = this.pieces.findIndex(piece => {
+        return piece.square == to;
+      });
+      console.log(this.pieces[takenPiece]);
+      if (!this.pieces[takenPiece]) {
+        let enpassant;
+        switch (this.game.turn()) {
+          case "w":
+            enpassant = to[0] + (parseInt(to[1]) + 1);
+            break;
+
+          case "b":
+            enpassant = to[0] + (parseInt(to[1]) - 1);
+            break;
+        }
+        console.log(enpassant);
+        takenPiece = this.pieces.findIndex(piece => {
+          return piece.square == enpassant;
+        });
+      }
+      this.pieces[takenPiece].hide();
+      this.pieces[takenPiece].square = null;
+    }
+    this.pieces[selectedPiece].square = to;
+    this.fromSquare = null;
+    this.toSquare = null;
+    this.possible = null;
+    console.log(this.game.ascii());
+    this.updatePieces();
+  }
+
+  shortCastle() {
+    let turn = this.game.turn();
+    this.game.move("O-O");
+    let kingIndex;
+    let rookIndex;
+    switch (turn) {
+      case "w":
+        kingIndex = this.pieces.findIndex(piece => {
+          return piece.square == "e1";
+        });
+        rookIndex = this.pieces.findIndex(piece => {
+          return piece.square == "h1";
+        });
+        this.pieces[kingIndex].square = "g1";
+        this.pieces[rookIndex].square = "f1";
+        break;
+
+      case "b":
+        kingIndex = this.pieces.findIndex(piece => {
+          return piece.square == "e8";
+        });
+        rookIndex = this.pieces.findIndex(piece => {
+          return piece.square == "h8";
+        });
+        this.pieces[kingIndex].square = "g8";
+        this.pieces[rookIndex].square = "f8";
+        break;
     }
     this.fromSquare = null;
     this.toSquare = null;
+    this.possible = null;
+    console.log(this.game.ascii());
+    this.updatePieces();
+  }
+
+  longCastle() {
+    let turn = this.game.turn();
+    this.game.move("O-O-O");
+    let kingIndex;
+    let rookIndex;
+    switch (turn) {
+      case "w":
+        kingIndex = this.pieces.findIndex(piece => {
+          return piece.square == "e1";
+        });
+        rookIndex = this.pieces.findIndex(piece => {
+          return piece.square == "a1";
+        });
+        this.pieces[kingIndex].square = "c1";
+        this.pieces[rookIndex].square = "d1";
+        break;
+
+      case "b":
+        kingIndex = this.pieces.findIndex(piece => {
+          return piece.square == "e8";
+        });
+        rookIndex = this.pieces.findIndex(piece => {
+          return piece.square == "a8";
+        });
+        this.pieces[kingIndex].square = "c8";
+        this.pieces[rookIndex].square = "d8";
+        break;
+    }
+    this.fromSquare = null;
+    this.toSquare = null;
+    this.possible = null;
     console.log(this.game.ascii());
     this.updatePieces();
   }

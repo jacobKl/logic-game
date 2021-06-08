@@ -21,7 +21,6 @@ export default class ChessPiece {
     let square = file + (z + 1);
     this.square = square;
 
-
     const loader = new GLTFLoader();
     const path = `./src/components/assets/chess/${this.color + this.type}.gltf`;
 
@@ -34,7 +33,8 @@ export default class ChessPiece {
   }
 
   update() {
-    this.setPosition(this.square);
+    if (this.square != null)
+      this.setPosition(this.square);
   }
 
   setPosition(square) {
@@ -52,5 +52,9 @@ export default class ChessPiece {
       case "g": this.model.position.x = 6 - 3.5; break;
       case "h": this.model.position.x = 7 - 3.5; break;
     }
+  }
+
+  hide() {
+    this.model.visible = false;
   }
 }
