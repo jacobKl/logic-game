@@ -13,6 +13,7 @@ class RoomsManager {
     rooms.push({
       id: rooms.length,
       inGame: 0,
+      usernames: [],
       gameData: [
         { x: 0, y: 0, z: 0, lookAt: { x: 0, y: 0, z: 0 }, animation: "" },
         { x: 0, y: 0, z: 0, lookAt: { x: 0, y: 0, z: 0 }, animation: "" },
@@ -29,7 +30,8 @@ class RoomsManager {
     let enemyId = 0;
     if (playerId == 2) enemyId = 0;
     if (playerId == 1) enemyId = 1;
-    return rooms[gameId].gameData[enemyId];
+    const enemyData = { ...rooms[gameId].gameData[enemyId], username: rooms[gameId].usernames[enemyId] };
+    return enemyData;
   }
 }
 

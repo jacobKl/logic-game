@@ -1,5 +1,5 @@
 export default {
-  locked: false,
+  locked: true,
   moveLeft: false,
   moveRight: false,
   moveForward: false,

@@ -1,4 +1,4 @@
-import { GridHelper, Scene, Vector3, AmbientLight, DirectionalLight, Clock, AxesHelper, CameraHelper, Mesh, BoxGeometry, MeshBasicMaterial } from "three";
+import { Scene, Vector3, DirectionalLight, Clock, AxesHelper } from "three";
 import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js";
 import Renderer from "./Renderer";
 import Camera from "./Camera";
@@ -67,7 +67,7 @@ export default class Main {
 
   updateData(data) {
     // ENEMY IN X,Y,Z POS
-    const { x, y, z, lookAt, animation } = data;
+    const { x, y, z, lookAt, animation, nickname } = data;
     this.enemy.object.position.set(x, y, z);
     const vector = new Vector3(lookAt.x, 0, lookAt.z);
     this.enemy.object.lookAt(vector);
@@ -85,8 +85,7 @@ export default class Main {
     if (this.fpsAdded) {
       this.fps.update(delta);
     }
-
-    this.player.updateIntersects(this.camera, this.room.getRoomObstacles());
+    this.player.updateIntersects(this.camera, this.room.getRoomObstacles(), this.table.colision);
     this.player.moving(this.camera);
     if (this.dataFlowing) {
       this.player.updateData();

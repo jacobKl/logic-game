@@ -14,8 +14,8 @@ const { changePlayerData } = require("./handlers/changePlayerData");
 
 const sessionMiddleware = session({
   secret: "WFXO1",
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
 });
 
 app.use(express.static("static"));

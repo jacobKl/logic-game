@@ -19,11 +19,12 @@ function init() {
   });
 
   buttonRef.addEventListener("click", () => {
-    if (username.length > 3) {
+    if (username.length >= 3) {
       socket.emit("join", username);
       socket.on("joined", (data) => {
         main.turnCamera();
         main.dataFlowing = true;
+        Config.locked = false;
         socket.on("dataFlow", (data) => {
           const enemyData = data;
           main.updateData(enemyData);
