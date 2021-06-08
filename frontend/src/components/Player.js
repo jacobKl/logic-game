@@ -52,7 +52,7 @@ export default class Player {
 
           resolve(this.object);
         },
-        () => { },
+        () => {},
         () => {
           reject(new Error("Error while loading model 1"));
         }
@@ -60,14 +60,16 @@ export default class Player {
     });
   }
 
-  updateIntersects(camera, obstacles) {
+  updateIntersects(camera, obstacles, table) {
     const ray = new Ray(camera.position, camera.getWorldDirection(new Vector3()));
     this.raycaster.ray = ray;
 
     // WALL COLLISION
-    this.intersects = this.raycaster.intersectObjects([...obstacles.children]);
+    const toCheck = [...obstacles.children, table].filter((item) => item != undefined);
+
+    this.intersects = this.raycaster.intersectObjects(toCheck);
     const walls = this.intersects.filter((item) => item.object.gameType == "wall");
-    const nearby = walls.filter((item) => item.distance < 5);
+    const nearby = walls.filter((item) => item.distance < 3);
     if (nearby.length) this.canMove = false;
     else this.canMove = true;
   }

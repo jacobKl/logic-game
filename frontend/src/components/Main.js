@@ -28,6 +28,7 @@ export default class Main {
     this.dataFlowing = false;
     this.mouse = new Mouse();
     this.table = new Table(this.scene);
+    this.yourColor = "";
 
     const firstModel = this.player.loadModel("./src/components/assets/playerModel/scene.gltf");
     const secondModel = this.enemy.loadModel("./src/components/assets/playerModel/scene.gltf");
@@ -52,7 +53,9 @@ export default class Main {
 
     // MOVE DETECTION
     document.addEventListener("click", (e) => {
-      this.chessboard.moveProxy(this.mouse, this.camera);
+      if (this.yourColor == this.nowPlaying) {
+        this.chessboard.moveProxy(this.mouse, this.camera);
+      }
     });
 
     // SETTLE PLAYER
@@ -65,9 +68,10 @@ export default class Main {
     this.enemy.animate("Armature|Idle");
   }
 
-  updateData(data) {
+  updateData(enemyData, yourData, moves) {
     // ENEMY IN X,Y,Z POS
-    const { x, y, z, lookAt, animation, nickname } = data;
+    const { x, y, z, lookAt, animation, nickname } = enemyData;
+    const { color, turn } = yourData;
     this.enemy.object.position.set(x, y, z);
     const vector = new Vector3(lookAt.x, 0, lookAt.z);
     this.enemy.object.lookAt(vector);
@@ -75,7 +79,17 @@ export default class Main {
       this.enemy.animate(animation);
       this.enemy.stopAnimate(this.prevAnim);
     }
-    this.prevAnim = animation;
+    this.nowPlaying = turn;
+    if (!this.yourColor) this.yourColor = color;
+  }
+
+  updateChess(moves, turn) {
+    this.nowPlaying = turn;
+    const lastMove = moves[moves.length - 1];
+    const { from, to } = lastMove;
+    this.chessboard.fromSquare = from;
+    this.chessboard.toSquare = to;
+    this.chessboard.moveProxy(this.mouse, this.camera);
   }
 
   render() {

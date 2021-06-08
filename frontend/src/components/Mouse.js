@@ -25,14 +25,30 @@ export default class Mouse {
 
         let file;
         switch (x) {
-          case 0: file = "a"; break;
-          case 1: file = "b"; break;
-          case 2: file = "c"; break;
-          case 3: file = "d"; break;
-          case 4: file = "e"; break;
-          case 5: file = "f"; break;
-          case 6: file = "g"; break;
-          case 7: file = "h"; break;
+          case 0:
+            file = "a";
+            break;
+          case 1:
+            file = "b";
+            break;
+          case 2:
+            file = "c";
+            break;
+          case 3:
+            file = "d";
+            break;
+          case 4:
+            file = "e";
+            break;
+          case 5:
+            file = "f";
+            break;
+          case 6:
+            file = "g";
+            break;
+          case 7:
+            file = "h";
+            break;
         }
 
         let square = file + (z + 1);

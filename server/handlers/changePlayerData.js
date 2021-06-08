@@ -7,7 +7,7 @@ function changePlayerData(io, data) {
   const gameId = socket.request.session.gameId;
   const playerId = socket.request.session.playerId;
   manager.changePlayerData(gameId, playerId, data);
-  const response = manager.getEnemyData(gameId, playerId);
+  const response = manager.getGameData(gameId, playerId);
   socket.broadcast.to(gameId).emit("dataFlow", response);
 }
 

@@ -11,6 +11,7 @@ const io = socket(server, {
 });
 const { joinRoomHandler } = require("./handlers/joinRoomHandler");
 const { changePlayerData } = require("./handlers/changePlayerData");
+const { makeMove } = require("./handlers/makeMove");
 
 const sessionMiddleware = session({
   secret: "WFXO1",
@@ -26,6 +27,7 @@ global.rooms = [];
 const connection = (socket) => {
   socket.on("join", joinRoomHandler.bind(socket, io));
   socket.on("changePlayerData", changePlayerData.bind(socket, io));
+  socket.on("makeMove", makeMove.bind(socket, io));
 };
 
 // EXPRESS SESSION AVAILABLE IN SOCKET.IO

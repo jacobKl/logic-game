@@ -63,13 +63,14 @@ export default class Chessboard {
       this.toSquare = mouse.getSquare(camera, this.getChessboardModel());
     }
     if (this.fromSquare != null && this.toSquare != null) {
-      let moveIsCastle = this.possible.some(move => {
+      this.possible = this.game.moves({ square: this.fromSquare });
+      let moveIsCastle = this.possible.some((move) => {
         return move.includes("O-O") && (this.toSquare == "g1" || this.toSquare == "c1" || this.toSquare == "g8" || this.toSquare == "c8");
       });
-      let moveIsPromotion = this.possible.some(move => {
+      let moveIsPromotion = this.possible.some((move) => {
         return move.includes("=") && /[abcdefgh][18]/.test(this.toSquare);
       });
-      let isPossible = this.possible.some(move => move.includes(this.toSquare));
+      let isPossible = this.possible.some((move) => move.includes(this.toSquare));
       if (isPossible && !moveIsCastle && !moveIsPromotion) {
         console.log(`ruch z ${this.fromSquare} na ${this.toSquare}`);
         this.makeMove(this.fromSquare, this.toSquare);
@@ -100,12 +101,16 @@ export default class Chessboard {
   }
 
   makeMove(from, to) {
-    let selectedPiece = this.pieces.findIndex(piece => { return piece.square == from; });
+    let selectedPiece = this.pieces.findIndex((piece) => {
+      return piece.square == from;
+    });
     this.game.move({ from: from, to: to });
     let history = this.game.history();
     let lastMove = history[history.length - 1];
     if (lastMove.includes("x")) {
-      let takenPiece = this.pieces.findIndex(piece => { return piece.square == to; });
+      let takenPiece = this.pieces.findIndex((piece) => {
+        return piece.square == to;
+      });
       console.log(this.pieces[takenPiece]);
       if (!this.pieces[takenPiece]) {
         let enpassant;
@@ -118,37 +123,37 @@ export default class Chessboard {
             enpassant = to[0] + (parseInt(to[1]) - 1);
             break;
         }
-        takenPiece = this.pieces.findIndex(piece => { return piece.square == enpassant; });
+        takenPiece = this.pieces.findIndex((piece) => {
+          return piece.square == enpassant;
+        });
       }
       this.pieces[takenPiece].hide();
     }
     this.pieces[selectedPiece].square = to;
-    this.fromSquare = null;
-    this.toSquare = null;
-    this.possible = null;
-    console.log(this.game.ascii());
-    this.updatePieces();
+    this.commitMove();
   }
 
   promotePawn(from, to, pieceToPromoteTo) {
-    let selectedPiece = this.pieces.findIndex(piece => { return piece.square == from; });
-    let promotionSquare = this.pieces.findIndex(piece => { return piece.square == to; });
+    let selectedPiece = this.pieces.findIndex((piece) => {
+      return piece.square == from;
+    });
+    let promotionSquare = this.pieces.findIndex((piece) => {
+      return piece.square == to;
+    });
 
     let color = this.game.turn();
     if (this.pieces[promotionSquare] == null) {
       this.game.move(`${to}=${pieceToPromoteTo}`);
       this.pieces[selectedPiece].hide();
       let newPiece = new ChessPiece(pieceToPromoteTo, color, this.group, 0, 0);
-      newPiece.loadModel().then(() => {
-        newPiece.square = to;
-        this.pieces.push(newPiece);
-        this.fromSquare = null;
-        this.toSquare = null;
-        this.possible = null;
-        console.log(this.game.ascii());
-        this.updatePieces();
-      })
-        .catch(err => {
+      newPiece
+        .loadModel()
+        .then(() => {
+          newPiece.square = to;
+          this.pieces.push(newPiece);
+          this.commitMove();
+        })
+        .catch((err) => {
           console.error(err);
         });
     } else {
@@ -156,16 +161,14 @@ export default class Chessboard {
       this.pieces[promotionSquare].hide();
       this.game.move(`${from[0]}x${to}=${pieceToPromoteTo}`);
       let newPiece = new ChessPiece(pieceToPromoteTo, color, this.group, 0, 0);
-      newPiece.loadModel().then(() => {
-        newPiece.square = to;
-        this.pieces.push(newPiece);
-        this.fromSquare = null;
-        this.toSquare = null;
-        this.possible = null;
-        console.log(this.game.ascii());
-        this.updatePieces();
-      })
-        .catch(err => {
+      newPiece
+        .loadModel()
+        .then(() => {
+          newPiece.square = to;
+          this.pieces.push(newPiece);
+          this.commitMove();
+        })
+        .catch((err) => {
           console.error(err);
         });
     }
@@ -178,10 +181,10 @@ export default class Chessboard {
     let rookIndex;
     switch (turn) {
       case "w":
-        kingIndex = this.pieces.findIndex(piece => {
+        kingIndex = this.pieces.findIndex((piece) => {
           return piece.square == "e1";
         });
-        rookIndex = this.pieces.findIndex(piece => {
+        rookIndex = this.pieces.findIndex((piece) => {
           return piece.square == "h1";
         });
         this.pieces[kingIndex].square = "g1";
@@ -189,21 +192,17 @@ export default class Chessboard {
         break;
 
       case "b":
-        kingIndex = this.pieces.findIndex(piece => {
+        kingIndex = this.pieces.findIndex((piece) => {
           return piece.square == "e8";
         });
-        rookIndex = this.pieces.findIndex(piece => {
+        rookIndex = this.pieces.findIndex((piece) => {
           return piece.square == "h8";
         });
         this.pieces[kingIndex].square = "g8";
         this.pieces[rookIndex].square = "f8";
         break;
     }
-    this.fromSquare = null;
-    this.toSquare = null;
-    this.possible = null;
-    console.log(this.game.ascii());
-    this.updatePieces();
+    this.commitMove();
   }
 
   longCastle() {
@@ -213,10 +212,10 @@ export default class Chessboard {
     let rookIndex;
     switch (turn) {
       case "w":
-        kingIndex = this.pieces.findIndex(piece => {
+        kingIndex = this.pieces.findIndex((piece) => {
           return piece.square == "e1";
         });
-        rookIndex = this.pieces.findIndex(piece => {
+        rookIndex = this.pieces.findIndex((piece) => {
           return piece.square == "a1";
         });
         this.pieces[kingIndex].square = "c1";
@@ -224,16 +223,21 @@ export default class Chessboard {
         break;
 
       case "b":
-        kingIndex = this.pieces.findIndex(piece => {
+        kingIndex = this.pieces.findIndex((piece) => {
           return piece.square == "e8";
         });
-        rookIndex = this.pieces.findIndex(piece => {
+        rookIndex = this.pieces.findIndex((piece) => {
           return piece.square == "a8";
         });
         this.pieces[kingIndex].square = "c8";
         this.pieces[rookIndex].square = "d8";
         break;
     }
+    this.commitMove();
+  }
+
+  commitMove() {
+    socket.emit("makeMove", { move: { from: this.fromSquare, to: this.toSquare }, turn: this.getTurn() });
     this.fromSquare = null;
     this.toSquare = null;
     this.possible = null;
@@ -242,7 +246,7 @@ export default class Chessboard {
   }
 
   updatePieces() {
-    this.pieces.forEach(piece => {
+    this.pieces.forEach((piece) => {
       piece.update();
     });
   }
@@ -253,5 +257,13 @@ export default class Chessboard {
 
   getChessboardModel() {
     return this.model;
+  }
+
+  getTurn() {
+    return this.game.turn();
+  }
+
+  getHistory() {
+    return this.game.history();
   }
 }

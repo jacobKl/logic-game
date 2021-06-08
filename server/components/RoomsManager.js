@@ -13,7 +13,10 @@ class RoomsManager {
     rooms.push({
       id: rooms.length,
       inGame: 0,
+      moves: [],
+      turn: "white",
       usernames: [],
+      colors: [],
       gameData: [
         { x: 0, y: 0, z: 0, lookAt: { x: 0, y: 0, z: 0 }, animation: "" },
         { x: 0, y: 0, z: 0, lookAt: { x: 0, y: 0, z: 0 }, animation: "" },
@@ -26,15 +29,17 @@ class RoomsManager {
     rooms[gameId].gameData[playerId] = data;
   }
 
-  getEnemyData(gameId, playerId) {
+  getGameData(gameId, playerId) {
     let enemyId = 0;
     if (playerId == 2) enemyId = 0;
     if (playerId == 1) enemyId = 1;
     const enemyData = { ...rooms[gameId].gameData[enemyId], username: rooms[gameId].usernames[enemyId] };
-    return enemyData;
+    const yourData = { color: rooms[gameId].colors[playerId], turn: rooms[gameId].turn };
+    const moves = rooms[gameId].moves;
+    return { enemyData, yourData, moves };
   }
 }
 
 module.exports = {
-  RoomsManager: RoomsManager,
+  RoomsManager,
 };

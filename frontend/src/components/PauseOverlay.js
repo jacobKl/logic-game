@@ -22,7 +22,7 @@ export default class PauseOverlay {
           this.controls.enabled = false;
         }
 
-        this.overlayRef.classList.toggle("block");
+        // this.overlayRef.classList.toggle("block");
       }
     });
   }

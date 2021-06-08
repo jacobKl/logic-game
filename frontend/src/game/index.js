@@ -21,13 +21,19 @@ function init() {
   buttonRef.addEventListener("click", () => {
     if (username.length >= 3) {
       socket.emit("join", username);
-      socket.on("joined", (data) => {
+      socket.on("joined", () => {
         main.turnCamera();
         main.dataFlowing = true;
         Config.locked = false;
         socket.on("dataFlow", (data) => {
-          const enemyData = data;
-          main.updateData(enemyData);
+          console.log(data);
+          const { enemyData, yourData, moves } = data;
+          main.updateData(enemyData, yourData, moves);
+        });
+
+        socket.on("chessChange", (data) => {
+          const { moves, turn } = data;
+          main.updateChess(moves, turn);
         });
       });
       usernameForm.classList.remove("block");
