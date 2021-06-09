@@ -99,7 +99,7 @@ export default class Main {
     if (this.fpsAdded) {
       this.fps.update(delta);
     }
-    this.player.updateIntersects(this.camera, this.room.getRoomObstacles(), this.table.colision);
+    this.player.updateIntersects(this.room.getRoomObstacles(), this.table.colision);
     this.player.moving(this.camera);
     if (this.dataFlowing) {
       this.player.updateData();
