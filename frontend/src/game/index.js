@@ -26,7 +26,7 @@ function init() {
         main.dataFlowing = true;
         Config.locked = false;
         socket.on("dataFlow", (data) => {
-          console.log(data);
+          // console.log(data);
           const { enemyData, yourData, moves } = data;
           main.updateData(enemyData, yourData, moves);
         });

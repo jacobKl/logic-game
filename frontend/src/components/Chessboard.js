@@ -51,7 +51,6 @@ export default class Chessboard {
         }
       }
     }
-    console.log(this.pieces);
   }
 
   moveProxy(mouse, camera) {
@@ -243,6 +242,26 @@ export default class Chessboard {
     this.possible = null;
     console.log(this.game.ascii());
     this.updatePieces();
+
+    if (this.game.game_over())
+      this.getGameResult();
+  }
+
+  getGameResult() {
+    if (this.game.in_checkmate()) {
+      let lost = this.game.turn();
+      switch (lost) {
+        case "w":
+          console.log("White lost");
+          break;
+
+        case "b":
+          console.log("Black lost");
+          break;
+      }
+    } else {
+      console.log("Draw");
+    }
   }
 
   updatePieces() {
