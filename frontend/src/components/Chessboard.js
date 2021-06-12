@@ -2,6 +2,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Group } from "three";
 import Chess from "chess.js";
 import ChessPiece from "./ChessPiece";
+import MoveHighlight from "./MoveHighlight";
 
 export default class Chessboard {
   constructor(scene) {
@@ -12,6 +13,7 @@ export default class Chessboard {
     this.fromSquare = null;
     this.toSquare = null;
     this.possible = null;
+    this.highlights = [];
 
     const loader = new GLTFLoader();
 
@@ -53,11 +55,42 @@ export default class Chessboard {
     }
   }
 
+  highlightPossible() {
+    this.possible.forEach(square => {
+      if (square == "O-O" && this.game.turn() == "w")
+        this.highlights.push(new MoveHighlight(this.group, "g1"));
+      else if (square == "O-O-O" && this.game.turn() == "w")
+        this.highlights.push(new MoveHighlight(this.group, "c1"));
+      else if (square == "O-O" && this.game.turn() == "b")
+        this.highlights.push(new MoveHighlight(this.group, "g8"));
+      else if (square == "O-O-O" && this.game.turn() == "b")
+        this.highlights.push(new MoveHighlight(this.group, "c8"));
+      if (square.includes("+"))
+        square = square.slice(0, -1);
+      if (square.includes("="))
+        square = square.slice(-4);
+      else
+        square = square.slice(-2);
+      this.highlights.push(new MoveHighlight(this.group, square));
+    });
+  }
+
+  removeHighlights() {
+    this.highlights.forEach(highlight => {
+      this.group.remove(highlight);
+    });
+    this.highlights = [];
+  }
+
   moveProxy(mouse, camera) {
     if (this.fromSquare == null) {
       this.fromSquare = mouse.getSquare(camera, this.getChessboardModel());
-      this.possible = this.game.moves({ square: this.fromSquare });
-      console.log(this.possible);
+      if (this.game.get(this.fromSquare) == null) {
+        this.fromSquare = null;
+      } else {
+        this.possible = this.game.moves({ square: this.fromSquare });
+        this.highlightPossible(this.possible);
+      }
     } else if (this.toSquare == null) {
       this.toSquare = mouse.getSquare(camera, this.getChessboardModel());
     }
@@ -71,8 +104,8 @@ export default class Chessboard {
       });
       let isPossible = this.possible.some((move) => move.includes(this.toSquare));
       if (isPossible && !moveIsCastle && !moveIsPromotion) {
-        console.log(`ruch z ${this.fromSquare} na ${this.toSquare}`);
         this.makeMove(this.fromSquare, this.toSquare);
+        this.removeHighlights();
       } else if (moveIsCastle) {
         switch (this.toSquare) {
           case "g1":
@@ -92,6 +125,7 @@ export default class Chessboard {
         }
         this.promotePawn(this.fromSquare, this.toSquare, selectedPiece);
       } else {
+        this.removeHighlights();
         this.fromSquare = null;
         this.toSquare = null;
         this.possible = null;
