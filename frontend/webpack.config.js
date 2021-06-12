@@ -2,7 +2,6 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: {
-    lobby: "./src/lobby/index.js",
     game: "./src/game/index.js",
   },
   output: {
@@ -16,15 +15,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       hash: true,
-      filename: "./index.html", //relative to root of the application
-      title: "2K Chess Lobby",
-      template: "./src/lobby/index.html",
-      chunks: ["lobby"],
-    }),
-    new HtmlWebpackPlugin({
-      hash: true,
       filename: "./game", //relative to root of the application
-      title: "Play chess!",
+      title: "Graj!",
       template: "./src/game/index.html",
       chunks: ["game"],
     }),

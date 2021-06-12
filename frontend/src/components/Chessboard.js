@@ -243,8 +243,7 @@ export default class Chessboard {
     console.log(this.game.ascii());
     this.updatePieces();
 
-    if (this.game.game_over())
-      this.getGameResult();
+    if (this.game.game_over()) this.getGameResult();
   }
 
   getGameResult() {
@@ -252,16 +251,22 @@ export default class Chessboard {
       let lost = this.game.turn();
       switch (lost) {
         case "w":
-          console.log("White lost");
+          this.won = "black";
+          this.lost = "white";
           break;
 
         case "b":
-          console.log("Black lost");
+          this.won = "white";
+          this.lost = "black";
+
           break;
       }
     } else {
-      console.log("Draw");
+      this.won = "draw";
     }
+
+    this.gameEnded = true;
+    this.storeInDb = { ago: new Date(), moves: this.game.history({ verbose: true }), won: this.won, lost: this.lost };
   }
 
   updatePieces() {

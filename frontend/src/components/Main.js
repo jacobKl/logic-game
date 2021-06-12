@@ -9,6 +9,7 @@ import Room from "./Room";
 import PauseOverlay from "./PauseOverlay";
 import Table from "./Table";
 import Mouse from "./Mouse";
+import { Socket } from "socket.io-client";
 
 export default class Main {
   constructor(container) {
@@ -33,6 +34,8 @@ export default class Main {
     const firstModel = this.player.loadModel("./src/components/assets/playerModel/scene.gltf");
     const secondModel = this.enemy.loadModel("./src/components/assets/playerModel/scene.gltf");
     Promise.all([firstModel, secondModel]).then(() => {
+      this.player.object.position.set(0, 1, 50);
+      this.enemy.object.position.set(-100, -100, -100);
       this.init();
       this.render();
     });
@@ -60,17 +63,17 @@ export default class Main {
 
     // SETTLE PLAYER
     this.scene.add(this.player.object);
-    this.player.object.position.set(0, 1, 75);
     this.player.animate("Armature|Idle");
     // SETTLE "ENEMY"
     this.scene.add(this.enemy.object);
-    this.enemy.object.position.set(0, 1, -75);
     this.enemy.animate("Armature|Idle");
+
+    document.querySelector("#dbtest").addEventListener("click", this.dbTest.bind(this));
   }
 
-  updateData(enemyData, yourData, moves) {
+  updateData(enemyData, yourData) {
     // ENEMY IN X,Y,Z POS
-    const { x, y, z, lookAt, animation, nickname } = enemyData;
+    const { x, y, z, lookAt, animation, username, color: enemyColor } = enemyData;
     const { color, turn } = yourData;
     this.enemy.object.position.set(x, y, z);
     const vector = new Vector3(lookAt.x, 0, lookAt.z);
@@ -79,8 +82,18 @@ export default class Main {
       this.enemy.animate(animation);
       this.enemy.stopAnimate(this.prevAnim);
     }
+    this.prevAnim = animation;
     this.nowPlaying = turn;
-    if (!this.yourColor) this.yourColor = color;
+    if (!this.yourColor) {
+      this.enemyColor = enemyColor;
+      this.enemyUsername = username;
+      this.yourColor = color;
+      if (this.yourColor == "white") this.player.object.position.set(0, 1, 75);
+      else {
+        this.player.object.position.set(0, 1, -75);
+        this.player.object.lookAt(this.enemy.object.position);
+      }
+    }
   }
 
   updateChess(moves, turn) {
@@ -109,6 +122,41 @@ export default class Main {
     this.player.update(delta);
     this.enemy.update(delta);
 
+    this.checkGameStatus();
+
     requestAnimationFrame(this.render.bind(this));
+  }
+
+  // TODO
+  // WHITE COLOR IS SENDING GAME RESULT IN ORDER TO SAVE RECORD ONLY ONCE - SHITTY FIX
+  checkGameStatus() {
+    if (this.chessboard.gameEnded && this.commitedToDb == undefined && this.yourColor == "white") {
+      const game = this.chessboard.storeInDb;
+
+      if (this.chessboard.storeInDb.won == this.yourColor) {
+        game.wonUsername = this.yourUsername;
+        game.lostUsername = this.enemyUsername;
+      } else {
+        game.wonUsername = this.enemyUsername;
+        game.lostUsername = this.yourUsername;
+      }
+      socket.emit("saveToDb", game);
+      this.commitedToDb = true;
+    }
+  }
+
+  dbTest() {
+    // const game = this.chessboard.storeInDb;
+
+    // if (this.chessboard.storeInDb.won == this.yourColor) {
+    //   game.wonUsername = this.yourUsername;
+    //   game.lostUsername = this.enemyUsername;
+    // } else {
+    //   game.wonUsername = this.enemyUsername;
+    //   game.lostUsername = this.yourUsername;
+    // }
+
+    const game = { ago: "2021-06-12T12:16:32.200Z", moves: ["f3", "e5", "g4", "Qh4#"], won: "black", lost: "white", wonUsername: "Mati", lostUsername: "Jakub" };
+    socket.emit("saveToDb", game);
   }
 }
