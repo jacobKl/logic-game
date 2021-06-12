@@ -3,6 +3,7 @@ const app = express();
 const socket = require("socket.io");
 const session = require("express-session");
 const server = app.listen(3000);
+const cors = require("cors");
 const io = socket(server, {
   cors: {
     origin: "*",
@@ -27,6 +28,7 @@ const sessionMiddleware = session({
   saveUninitialized: true,
 });
 
+app.use(cors());
 app.use(express.static("static"));
 app.use(sessionMiddleware);
 app.set("view engine", "ejs");
@@ -41,6 +43,14 @@ app.get("/history", (req, res) => {
   DB.getAllGames().then((games) => {
     games.sort((a, b) => new Date(b.ago) - new Date(a.ago));
     res.render("analize", { games: games });
+  });
+});
+
+app.get("/getGameData", (req, res) => {
+  const gameId = req.query.gameId;
+  DB.getGameById(gameId).then((game) => {
+    console.log(game);
+    res.end(JSON.stringify(game));
   });
 });
 

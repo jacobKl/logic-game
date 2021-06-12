@@ -5,11 +5,12 @@ import ChessPiece from "./ChessPiece";
 import MoveHighlight from "./MoveHighlight";
 
 export default class Chessboard {
-  constructor(scene) {
+  constructor(scene, fen) {
     this.scene = scene;
     this.group = new Group();
     this.pieces = [];
-    this.game = new Chess();
+    this.fen = fen;
+    this.game = new Chess(fen);
     this.fromSquare = null;
     this.toSquare = null;
     this.possible = null;

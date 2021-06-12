@@ -5,7 +5,6 @@ class Database {
 
   dbInsert(record) {
     this.collection.insert(record, (err, inDb) => {
-      console.log("==SUCCESSFULLY ADDED RECORD==");
       console.log(inDb);
     });
   }
@@ -13,7 +12,6 @@ class Database {
   getAllGames() {
     return new Promise((resolve, reject) => {
       this.collection.find({}, (err, docs) => {
-        console.log("==RETURNING LIST OF GAMES==");
         resolve(docs);
       });
     });
@@ -22,8 +20,15 @@ class Database {
   getFreeId() {
     return new Promise((resolve, reject) => {
       this.collection.count({}, (err, docs) => {
-        console.log("==RECORDS COUNT==");
         resolve(docs);
+      });
+    });
+  }
+
+  getGameById(gameId) {
+    return new Promise((resolve, reject) => {
+      this.collection.findOne({ id: parseInt(gameId) }, (err, doc) => {
+        resolve(doc);
       });
     });
   }

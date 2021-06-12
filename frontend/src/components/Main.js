@@ -9,7 +9,6 @@ import Room from "./Room";
 import PauseOverlay from "./PauseOverlay";
 import Table from "./Table";
 import Mouse from "./Mouse";
-import { Socket } from "socket.io-client";
 
 export default class Main {
   constructor(container) {

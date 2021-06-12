@@ -42,7 +42,7 @@
     </nav>
 
     <div class="container">
-        <h3 class="text-center py-2">Tutaj mozesz analizować partie które się juz odbyły.</h3>
+        <h3 class="text-center py-2">Tutaj możesz przeanalizować partię które już się zakończyły.</h3>
         <div class="d-flex flex-wrap">
             <% games.forEach(game => { %>
                 <div class="d-flex col-md-6 border rounded p-2 my-2">
@@ -77,7 +77,7 @@
                             </li>
                             <li>Liczba ruchów: <span class="fw-bold"><%= game.moves.length%></span></li>
                         </ul>
-                        <a href="http://localhost:8080/analize?gameId=<%= game.id%>" class="btn btn-primary">Analizuj</a>
+                        <a href="http://localhost:8080/analize?gameId=<%= game.id%>" class="btn btn-primary" target="_blank">Analizuj</a>
                     </div>
                 </div>
             <% }) %>
