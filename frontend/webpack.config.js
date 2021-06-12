@@ -3,6 +3,7 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   entry: {
     game: "./src/game/index.js",
+    analize: "./src/analize/index.js",
   },
   output: {
     filename: "[name].js",
@@ -19,6 +20,13 @@ module.exports = {
       title: "Graj!",
       template: "./src/game/index.html",
       chunks: ["game"],
+    }),
+    new HtmlWebpackPlugin({
+      hash: true,
+      filename: "./analize", //relative to root of the application
+      title: "Analizuj",
+      template: "./src/analize/index.html",
+      chunks: ["analize"],
     }),
   ],
   module: {

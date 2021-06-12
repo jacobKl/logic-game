@@ -9,7 +9,6 @@ const io = socket(server, {
     credentials: true,
   },
 });
-
 const { joinRoomHandler } = require("./handlers/joinRoomHandler");
 const { changePlayerData } = require("./handlers/changePlayerData");
 const { makeMove } = require("./handlers/makeMove");
@@ -30,8 +29,20 @@ const sessionMiddleware = session({
 
 app.use(express.static("static"));
 app.use(sessionMiddleware);
+app.set("view engine", "ejs");
 
 global.rooms = [];
+
+app.get("/", (req, res) => {
+  res.render("lobby");
+});
+
+app.get("/history", (req, res) => {
+  DB.getAllGames().then((games) => {
+    games.sort((a, b) => new Date(b.ago) - new Date(a.ago));
+    res.render("analize", { games: games });
+  });
+});
 
 const connection = (socket) => {
   // GAME HANDLERS
@@ -39,8 +50,6 @@ const connection = (socket) => {
   socket.on("changePlayerData", changePlayerData.bind(socket, io));
   socket.on("makeMove", makeMove.bind(socket, io));
   socket.on("saveToDb", saveToDb.bind(socket, io));
-
-  // LOBBY HANDLERS
 };
 
 // EXPRESS SESSION AVAILABLE IN SOCKET.IO

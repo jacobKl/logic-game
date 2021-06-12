@@ -11,8 +11,20 @@ class Database {
   }
 
   getAllGames() {
-    return this.collection.find({}, (err, docs) => {
-      console.log("==RETURNING LIST OF GAMES==");
+    return new Promise((resolve, reject) => {
+      this.collection.find({}, (err, docs) => {
+        console.log("==RETURNING LIST OF GAMES==");
+        resolve(docs);
+      });
+    });
+  }
+
+  getFreeId() {
+    return new Promise((resolve, reject) => {
+      this.collection.count({}, (err, docs) => {
+        console.log("==RECORDS COUNT==");
+        resolve(docs);
+      });
     });
   }
 }

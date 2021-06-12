@@ -266,7 +266,7 @@ export default class Chessboard {
     }
 
     this.gameEnded = true;
-    this.storeInDb = { ago: new Date(), moves: this.game.history({ verbose: true }), won: this.won, lost: this.lost };
+    this.storeInDb = { ago: new Date(), moves: this.game.history({ verbose: true }), fen: this.game.fen(), won: this.won, lost: this.lost };
   }
 
   updatePieces() {

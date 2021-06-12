@@ -67,8 +67,6 @@ export default class Main {
     // SETTLE "ENEMY"
     this.scene.add(this.enemy.object);
     this.enemy.animate("Armature|Idle");
-
-    document.querySelector("#dbtest").addEventListener("click", this.dbTest.bind(this));
   }
 
   updateData(enemyData, yourData) {
@@ -143,20 +141,5 @@ export default class Main {
       socket.emit("saveToDb", game);
       this.commitedToDb = true;
     }
-  }
-
-  dbTest() {
-    // const game = this.chessboard.storeInDb;
-
-    // if (this.chessboard.storeInDb.won == this.yourColor) {
-    //   game.wonUsername = this.yourUsername;
-    //   game.lostUsername = this.enemyUsername;
-    // } else {
-    //   game.wonUsername = this.enemyUsername;
-    //   game.lostUsername = this.yourUsername;
-    // }
-
-    const game = { ago: "2021-06-12T12:16:32.200Z", moves: ["f3", "e5", "g4", "Qh4#"], won: "black", lost: "white", wonUsername: "Mati", lostUsername: "Jakub" };
-    socket.emit("saveToDb", game);
   }
 }

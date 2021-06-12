@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analizuj gry</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+        crossorigin="anonymous"></script>
+        <link rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+      integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+      crossorigin="anonymous">
+      
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light px-2">
+      <a class="navbar-brand d-flex align-items-start" href="#">
+        <span class="fw-bold fs-1">2K</span>
+        <span class="fw-light fs-5 text-uppercase pt-2">Chess.com</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="ms-auto navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="/analize">Historia gier</span></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+        <h3 class="text-center py-2">Tutaj mozesz analizować partie które się juz odbyły.</h3>
+        <div class="d-flex flex-wrap">
+            <% games.forEach(game => { %>
+                <div class="d-flex col-md-6 border rounded p-2 my-2">
+                    <div class="col-5 border">
+                        <div class="board" data-fen="<%= game.fen %>">
+                        </div>
+                    </div>
+                    <div class="col-7 px-2">
+                        <h6 class="fw-lighter"> <%= new Date(game.ago).toLocaleString()%> </h6>
+                        <h2>Szczegóły gry</h2>
+                        <h4 class="fw-lighter"> <%= game.wonUsername%> vs <%= game.lostUsername%></h4>
+                        <p></p>
+                        <ul class="px-3">
+                            
+                                <% if(game.won != "draw") { %>
+                                    <li>
+                                    Zwycięstwo
+                                    <% if(game.won != "black") { %>
+                                        <b>białych - <%= game.wonUsername %> </b>
+                                    <% } else { %>
+                                        <b>czarnych - <%= game.wonUsername %> </b>
+                                    <% } %>
+                                </li>
+                                <% } %>
+                            
+                            <li>
+                                <% if(game.won != "draw") { %>
+                                    <b>MAT</b>
+                                <% } else { %>
+                                    <b>remis</b>
+                                <% } %>
+                            </li>
+                            <li>Liczba ruchów: <span class="fw-bold"><%= game.moves.length%></span></li>
+                        </ul>
+                        <a href="http://localhost:8080/analize?gameId=<%= game.id%>" class="btn btn-primary">Analizuj</a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <script>
+        const boards = document.querySelectorAll(".board");
+
+        boards.forEach(board => {
+            const fen = board.getAttribute("data-fen")
+            Chessboard(board, fen);
+        })
+    </script>
+
+
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
