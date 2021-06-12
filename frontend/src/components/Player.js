@@ -49,10 +49,14 @@ export default class Player {
           this.object.animations = model.animations;
           this.mixer = new AnimationMixer(this.object);
           this.object.scale.set(10, 10, 10);
-
+          this.object.traverse((child) => {
+            if (child.isMesh) {
+              child.castShadow = true;
+            }
+          });
           resolve(this.object);
         },
-        () => { },
+        () => {},
         () => {
           reject(new Error("Error while loading model 1"));
         }

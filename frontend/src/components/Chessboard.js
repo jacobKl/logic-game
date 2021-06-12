@@ -3,9 +3,10 @@ import { Group } from "three";
 import Chess from "chess.js";
 import ChessPiece from "./ChessPiece";
 import MoveHighlight from "./MoveHighlight";
+import CustomPopUp from "./CustomPopUp";
 
 export default class Chessboard {
-  constructor(scene, fen) {
+  constructor(scene, fen, listener) {
     this.scene = scene;
     this.group = new Group();
     this.pieces = [];
@@ -15,6 +16,7 @@ export default class Chessboard {
     this.toSquare = null;
     this.possible = null;
     this.highlights = [];
+    this.customPopUp = new CustomPopUp(".end-game-notifier", ".close-notifier");
 
     const loader = new GLTFLoader();
 
@@ -57,27 +59,20 @@ export default class Chessboard {
   }
 
   highlightPossible() {
-    this.possible.forEach(square => {
-      if (square == "O-O" && this.game.turn() == "w")
-        this.highlights.push(new MoveHighlight(this.group, "g1"));
-      else if (square == "O-O-O" && this.game.turn() == "w")
-        this.highlights.push(new MoveHighlight(this.group, "c1"));
-      else if (square == "O-O" && this.game.turn() == "b")
-        this.highlights.push(new MoveHighlight(this.group, "g8"));
-      else if (square == "O-O-O" && this.game.turn() == "b")
-        this.highlights.push(new MoveHighlight(this.group, "c8"));
-      if (square.includes("+"))
-        square = square.slice(0, -1);
-      if (square.includes("="))
-        square = square.slice(-4);
-      else
-        square = square.slice(-2);
+    this.possible.forEach((square) => {
+      if (square == "O-O" && this.game.turn() == "w") this.highlights.push(new MoveHighlight(this.group, "g1"));
+      else if (square == "O-O-O" && this.game.turn() == "w") this.highlights.push(new MoveHighlight(this.group, "c1"));
+      else if (square == "O-O" && this.game.turn() == "b") this.highlights.push(new MoveHighlight(this.group, "g8"));
+      else if (square == "O-O-O" && this.game.turn() == "b") this.highlights.push(new MoveHighlight(this.group, "c8"));
+      if (square.includes("+")) square = square.slice(0, -1);
+      if (square.includes("=")) square = square.slice(-4);
+      else square = square.slice(-2);
       this.highlights.push(new MoveHighlight(this.group, square));
     });
   }
 
   removeHighlights() {
-    this.highlights.forEach(highlight => {
+    this.highlights.forEach((highlight) => {
       this.group.remove(highlight);
     });
     this.highlights = [];
@@ -296,10 +291,13 @@ export default class Chessboard {
 
           break;
       }
+      this.customPopUp.setPopUpField(".won-by", this.won);
+      this.customPopUp.setPopUpField(".game-status", "MAT");
     } else {
       this.won = "draw";
+      this.customPopUp.setPopUpField(".game-status", "REMIS");
     }
-
+    this.customPopUp.showPopUp();
     this.gameEnded = true;
     this.storeInDb = { ago: new Date(), moves: this.game.history({ verbose: true }), fen: this.game.fen(), won: this.won, lost: this.lost };
   }

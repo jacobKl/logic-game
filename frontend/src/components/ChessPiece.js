@@ -9,14 +9,30 @@ export default class ChessPiece {
     let z = 8 - (zPos + 4.5);
     let file;
     switch (x) {
-      case 7: file = "a"; break;
-      case 6: file = "b"; break;
-      case 5: file = "c"; break;
-      case 4: file = "d"; break;
-      case 3: file = "e"; break;
-      case 2: file = "f"; break;
-      case 1: file = "g"; break;
-      case 0: file = "h"; break;
+      case 7:
+        file = "a";
+        break;
+      case 6:
+        file = "b";
+        break;
+      case 5:
+        file = "c";
+        break;
+      case 4:
+        file = "d";
+        break;
+      case 3:
+        file = "e";
+        break;
+      case 2:
+        file = "f";
+        break;
+      case 1:
+        file = "g";
+        break;
+      case 0:
+        file = "h";
+        break;
     }
 
     let square = file + (z + 1);
@@ -28,24 +44,26 @@ export default class ChessPiece {
 
   loadModel() {
     return new Promise((resolve, reject) => {
-      this.loader.load(this.path, (model) => {
-        this.model = model.scene;
-        this.model.position.y = 0.55;
-        this.setPosition(this.square);
-        this.group.add(this.model);
+      this.loader.load(
+        this.path,
+        (model) => {
+          this.model = model.scene;
+          this.model.position.y = 0.55;
+          this.setPosition(this.square);
+          this.group.add(this.model);
 
-        resolve(this.model);
-      },
-        () => { },
+          resolve(this.model);
+        },
+        () => {},
         () => {
           reject(new Error("Error while loading piece model"));
-        });
+        }
+      );
     });
   }
 
   update() {
-    if (this.square != null)
-      this.setPosition(this.square);
+    if (this.square != null) this.setPosition(this.square);
   }
 
   setPosition(square) {
@@ -55,14 +73,30 @@ export default class ChessPiece {
     if (this.model) {
       this.model.position.z = 8 - rank - 3.5;
       switch (file) {
-        case "a": this.model.position.x = 0 - 3.5; break;
-        case "b": this.model.position.x = 1 - 3.5; break;
-        case "c": this.model.position.x = 2 - 3.5; break;
-        case "d": this.model.position.x = 3 - 3.5; break;
-        case "e": this.model.position.x = 4 - 3.5; break;
-        case "f": this.model.position.x = 5 - 3.5; break;
-        case "g": this.model.position.x = 6 - 3.5; break;
-        case "h": this.model.position.x = 7 - 3.5; break;
+        case "a":
+          this.model.position.x = 0 - 3.5;
+          break;
+        case "b":
+          this.model.position.x = 1 - 3.5;
+          break;
+        case "c":
+          this.model.position.x = 2 - 3.5;
+          break;
+        case "d":
+          this.model.position.x = 3 - 3.5;
+          break;
+        case "e":
+          this.model.position.x = 4 - 3.5;
+          break;
+        case "f":
+          this.model.position.x = 5 - 3.5;
+          break;
+        case "g":
+          this.model.position.x = 6 - 3.5;
+          break;
+        case "h":
+          this.model.position.x = 7 - 3.5;
+          break;
       }
     }
   }

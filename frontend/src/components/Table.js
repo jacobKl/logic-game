@@ -13,6 +13,11 @@ export default class Table {
       this.model.position.y = 0.55;
       this.model.scale.set(0.4, 0.4, 0.4);
       this.scene.add(this.model);
+      this.model.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+        }
+      });
       this.setBoundingBox();
     });
   }

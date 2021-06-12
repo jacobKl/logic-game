@@ -5,7 +5,6 @@ import floorTexture from "./assets/room/floorTexture.jpg";
 export default class Wall extends Mesh {
   constructor(scene, posX, posZ, isFloor) {
     const loader = new TextureLoader();
-
     let texture;
     if (isFloor) texture = loader.load(floorTexture);
     else texture = loader.load(wallTexture);
@@ -23,7 +22,7 @@ export default class Wall extends Mesh {
     });
 
     super(geometry, material);
-
+    this.receiveShadow = true;
     if (posX != 0) {
       this.rotation.y = Math.PI / 2;
     }

@@ -1,4 +1,4 @@
-import { Scene, Vector3, DirectionalLight, Clock, AxesHelper } from "three";
+import { Scene, Vector3, PointLight, Clock, AxesHelper, AudioListener } from "three";
 import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js";
 import Renderer from "./Renderer";
 import Camera from "./Camera";
@@ -14,10 +14,15 @@ export default class Main {
   constructor(container) {
     this.container = container;
     this.scene = new Scene();
-    this.light = new DirectionalLight(0xffffff);
+    this.audioListener = new AudioListener();
+    this.light = new PointLight(0xffffe0);
+    this.light.castShadow = true;
+    this.light.position.set(0, 70, 0);
+    this.light.lookAt(0, 0, 0);
+
     this.renderer = new Renderer(container);
     this.camera = new Camera(90, window.screen.width, window.screen.height);
-    this.chessboard = new ChessBoard(this.scene);
+    this.chessboard = new ChessBoard(this.scene, "", this.audioListener);
     this.player = new Player();
     this.enemy = new Player();
     this.room = new Room(this.scene);

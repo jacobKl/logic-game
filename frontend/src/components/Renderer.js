@@ -1,4 +1,4 @@
-import { WebGLRenderer } from "three";
+import { WebGLRenderer, PCFShadowMap } from "three";
 
 export default class Renderer extends WebGLRenderer {
   constructor(container) {
@@ -8,6 +8,9 @@ export default class Renderer extends WebGLRenderer {
 
     this.container.appendChild(this.domElement);
     this.setClearColor(0x999999);
+
+    this.shadowMap.enabled = true;
+    this.shadowMap.type = PCFShadowMap;
 
     // resize
     this.updateSize();
