@@ -15,7 +15,6 @@ function joinRoomHandler(io, data) {
   rooms[room.id].colors[socket.request.session.playerId] = color;
 
   socket.join(room.id);
-  io.in(room.id).emit("joined", room);
 }
 
 module.exports = {
