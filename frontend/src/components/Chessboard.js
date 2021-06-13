@@ -70,7 +70,7 @@ export default class Chessboard {
       else if (square == "O-O-O" && this.game.turn() == "w") this.highlights.push(new MoveHighlight(this.group, "c1"));
       else if (square == "O-O" && this.game.turn() == "b") this.highlights.push(new MoveHighlight(this.group, "g8"));
       else if (square == "O-O-O" && this.game.turn() == "b") this.highlights.push(new MoveHighlight(this.group, "c8"));
-      if (square.includes("+")) square = square.slice(0, -1);
+      if (square.includes("+") || square.includes("#")) square = square.slice(0, -1);
       if (square.includes("=")) square = square.slice(-4);
       else square = square.slice(-2);
       this.highlights.push(new MoveHighlight(this.group, square));
