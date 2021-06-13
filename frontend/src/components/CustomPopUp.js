@@ -2,6 +2,7 @@ export default class CustomPopUp {
   constructor(popupWrapper, popupToggler) {
     this.popUpWrapper = document.querySelector(popupWrapper);
     this.popUpToggler = document.querySelector(popupToggler);
+
     this.init();
   }
 

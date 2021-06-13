@@ -6,7 +6,7 @@ import MoveHighlight from "./MoveHighlight";
 import CustomPopUp from "./CustomPopUp";
 
 export default class Chessboard {
-  constructor(scene, fen, listener) {
+  constructor(scene, fen, listener, isAnalize = false) {
     this.scene = scene;
     this.group = new Group();
     this.pieces = [];
@@ -16,13 +16,18 @@ export default class Chessboard {
     this.toSquare = null;
     this.possible = null;
     this.highlights = [];
-    this.audio = new Audio(listener);
-    this.audioLoader = new AudioLoader();
-    this.getSoundsAsync().then((buffer) => {
-      this.audio.setBuffer(buffer);
-    });
+    this.isAnalize = isAnalize;
+    if (this.listener) {
+      this.audio = new Audio(listener);
+      this.audioLoader = new AudioLoader();
+      this.getSoundsAsync().then((buffer) => {
+        this.audio.setBuffer(buffer);
+      });
+    }
 
-    this.customPopUp = new CustomPopUp(".end-game-notifier", ".close-notifier");
+    if (!this.isAnalize) {
+      this.customPopUp = new CustomPopUp(".end-game-notifier", ".close-notifier");
+    }
 
     const loader = new GLTFLoader();
 
@@ -297,14 +302,22 @@ export default class Chessboard {
 
           break;
       }
-      this.customPopUp.setPopUpField(".won-by", this.won);
-      this.customPopUp.setPopUpField(".game-status", "MAT");
+      if (!this.isAnalize) {
+        this.customPopUp.setPopUpField(".won-by", this.won);
+        this.customPopUp.setPopUpField(".game-status", "MAT");
+      }
     } else {
       this.won = "draw";
 
-      this.customPopUp.setPopUpField(".game-status", "REMIS");
+      if (!this.isAnalize) {
+        this.customPopUp.setPopUpField(".game-status", "REMIS");
+      }
     }
-    this.customPopUp.showPopUp();
+
+    if (!this.isAnalize) {
+      this.customPopUp.showPopUp();
+    }
+
     this.gameEnded = true;
     this.storeInDb = { ago: new Date(), moves: this.game.history({ verbose: true }), fen: this.game.fen(), won: this.won, lost: this.lost };
   }
