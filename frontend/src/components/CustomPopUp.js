@@ -1,18 +1,18 @@
 export default class CustomPopUp {
   constructor(popupWrapper, popupToggler) {
-    this.popupWrapper = document.querySelector(popupWrapper);
-    this.popupToggler = document.querySelector(popupToggler);
+    this.popUpWrapper = document.querySelector(popupWrapper);
+    this.popUpToggler = document.querySelector(popupToggler);
     this.init();
   }
 
   init() {
-    this.popupToggler.addEventListener("click", () => {
-      this.popupWrapper.classList.remove("block");
+    this.popUpToggler.addEventListener("click", () => {
+      this.popUpWrapper.classList.remove("block");
     });
   }
 
   showPopUp() {
-    this.popupWrapper.classList.add("block");
+    this.popUpWrapper.classList.add("block");
   }
 
   setPopUpField(selector, value) {

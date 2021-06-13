@@ -16,6 +16,7 @@ export default class Table {
       this.model.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
+          child.receiveShadow = true;
         }
       });
       this.setBoundingBox();

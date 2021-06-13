@@ -49,7 +49,6 @@ app.get("/history", (req, res) => {
 app.get("/getGameData", (req, res) => {
   const gameId = req.query.gameId;
   DB.getGameById(gameId).then((game) => {
-    console.log(game);
     res.end(JSON.stringify(game));
   });
 });

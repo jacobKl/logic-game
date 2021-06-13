@@ -32,7 +32,7 @@ export default class MainAnalize {
       .then((res) => res.json())
       .then((res) => {
         this.chessData = res;
-        this.chessboard = new ChessBoard(this.scene, this.chessData.fen);
+        this.chessboard = new ChessBoard(this.scene, this.chessData.fen, undefined);
       });
   }
 

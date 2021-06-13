@@ -1,5 +1,5 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Group } from "three";
+import { Group, AudioLoader, Audio } from "three";
 import Chess from "chess.js";
 import ChessPiece from "./ChessPiece";
 import MoveHighlight from "./MoveHighlight";
@@ -16,6 +16,12 @@ export default class Chessboard {
     this.toSquare = null;
     this.possible = null;
     this.highlights = [];
+    this.audio = new Audio(listener);
+    this.audioLoader = new AudioLoader();
+    this.getSoundsAsync().then((buffer) => {
+      this.audio.setBuffer(buffer);
+    });
+
     this.customPopUp = new CustomPopUp(".end-game-notifier", ".close-notifier");
 
     const loader = new GLTFLoader();
@@ -272,7 +278,7 @@ export default class Chessboard {
     this.possible = null;
     console.log(this.game.ascii());
     this.updatePieces();
-
+    this.playMoveSound();
     if (this.game.game_over()) this.getGameResult();
   }
 
@@ -295,6 +301,7 @@ export default class Chessboard {
       this.customPopUp.setPopUpField(".game-status", "MAT");
     } else {
       this.won = "draw";
+
       this.customPopUp.setPopUpField(".game-status", "REMIS");
     }
     this.customPopUp.showPopUp();
@@ -322,5 +329,31 @@ export default class Chessboard {
 
   getHistory() {
     return this.game.history();
+  }
+
+  getSoundsAsync() {
+    // LOAD SOUND AS IN #1 EXAMPLE AND RETURN AS ARRAY OF PROMISES, LATER IN CONSTRUCTOR HANDLE
+    // AS PROMISE.ALL CREATE UNIVERSAL METHOD TO PLAY SOUNDS
+    // 13.06 ONLY MOVE SOUND ADDED !TODO
+
+    // #1
+    const move = new Promise((resolve, reject) => {
+      this.audioLoader.load("./src/components/assets/chess/move.mp3", (buffer) => {
+        resolve(buffer);
+      });
+    });
+
+    // ...
+    // const mate = new Promise((resolve, reject) => {
+    //   this.audioLoader.load();
+    // });
+
+    return move;
+    // ...
+    // return [move, mate]
+  }
+
+  playMoveSound() {
+    this.audio.play();
   }
 }

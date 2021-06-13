@@ -8,6 +8,7 @@ import ChessBoard from "./Chessboard";
 import Room from "./Room";
 import PauseOverlay from "./PauseOverlay";
 import Table from "./Table";
+import Lamp from "./Lamp";
 import Mouse from "./Mouse";
 
 export default class Main {
@@ -15,14 +16,15 @@ export default class Main {
     this.container = container;
     this.scene = new Scene();
     this.audioListener = new AudioListener();
-    this.light = new PointLight(0xffffe0);
+    this.light = new PointLight(0xffffe0, 0.7, 300);
     this.light.castShadow = true;
-    this.light.position.set(0, 70, 0);
+    this.light.position.set(0, 50, 0);
     this.light.lookAt(0, 0, 0);
 
     this.renderer = new Renderer(container);
     this.camera = new Camera(90, window.screen.width, window.screen.height);
-    this.chessboard = new ChessBoard(this.scene, "", this.audioListener);
+    this.camera.add(this.audioListener);
+    this.chessboard = new ChessBoard(this.scene, undefined, this.audioListener);
     this.player = new Player();
     this.enemy = new Player();
     this.room = new Room(this.scene);
@@ -32,7 +34,10 @@ export default class Main {
     this.prevAnim = undefined;
     this.dataFlowing = false;
     this.mouse = new Mouse();
+
     this.table = new Table(this.scene);
+    this.lamp = new Lamp(this.scene);
+
     this.yourColor = "";
 
     const firstModel = this.player.loadModel("./src/components/assets/playerModel/scene.gltf");
@@ -90,10 +95,9 @@ export default class Main {
       this.enemyColor = enemyColor;
       this.enemyUsername = username;
       this.yourColor = color;
-      if (this.yourColor == "white") this.player.object.position.set(0, 1, 75);
+      if (this.yourColor == "white") this.player.object.position.set(0, 1, 25);
       else {
-        this.player.object.position.set(0, 1, -75);
-        this.player.object.lookAt(this.enemy.object.position);
+        this.player.object.position.set(0, 1, -25);
       }
     }
   }

@@ -11,6 +11,7 @@ export default class Room {
     new Wall(this.group, 100, 0, false);
     new Wall(this.group, -100, 0, false);
     new Wall(this.group, 0, 0, true);
+    new Wall(this.group, 0, 0, false, true);
 
     this.group.position.y = 37.5;
 

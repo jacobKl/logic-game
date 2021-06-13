@@ -3,10 +3,10 @@ import wallTexture from "./assets/room/wallTexture.jpg";
 import floorTexture from "./assets/room/floorTexture.jpg";
 
 export default class Wall extends Mesh {
-  constructor(scene, posX, posZ, isFloor) {
+  constructor(scene, posX, posZ, isFloor, isCeilling = undefined) {
     const loader = new TextureLoader();
     let texture;
-    if (isFloor) texture = loader.load(floorTexture);
+    if (isFloor || isCeilling) texture = loader.load(floorTexture);
     else texture = loader.load(wallTexture);
 
     texture.wrapS = RepeatWrapping;
@@ -14,7 +14,7 @@ export default class Wall extends Mesh {
     texture.repeat.set(4, 1);
 
     let geometry;
-    if (isFloor) geometry = new PlaneGeometry(200, 200);
+    if (isFloor || isCeilling) geometry = new PlaneGeometry(200, 200);
     else geometry = new PlaneGeometry(200, 75);
     let material = new MeshPhongMaterial({
       side: DoubleSide,
@@ -34,6 +34,12 @@ export default class Wall extends Mesh {
       this.rotation.x = Math.PI / 2;
       this.position.set(posX, -37.5, posZ);
       this.gameType = "floor";
+    }
+
+    if (isCeilling) {
+      this.rotation.x = Math.PI / 2;
+      this.position.set(posX, 30, posZ);
+      this.gameType = "ceilling";
     }
 
     scene.add(this);
