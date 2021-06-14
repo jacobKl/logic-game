@@ -17,8 +17,9 @@ export default class Chessboard {
     this.possible = null;
     this.highlights = [];
     this.isAnalize = isAnalize;
+    this.listener = listener;
     if (this.listener) {
-      this.audio = new Audio(listener);
+      this.audio = new Audio(this.listener);
       this.audioLoader = new AudioLoader();
       this.getSoundsAsync().then((buffer) => {
         this.audio.setBuffer(buffer);
