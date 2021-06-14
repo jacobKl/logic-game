@@ -62307,7 +62307,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-__webpack_require__.g.socket = (0,socket_io_client__WEBPACK_IMPORTED_MODULE_1__.io)("http://localhost:3000");
+__webpack_require__.g.socket = (0,socket_io_client__WEBPACK_IMPORTED_MODULE_1__.io)("/");
 
 function init() {
   const container = document.getElementById("root");
