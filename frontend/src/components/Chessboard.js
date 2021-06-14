@@ -131,11 +131,7 @@ export default class Chessboard {
             break;
         }
       } else if (moveIsPromotion && isPossible) {
-        let selectedPiece;
-        while (!/^[QRBNqrbn]$/.test(selectedPiece)) {
-          selectedPiece = prompt("Q - hetman, R - wieża, B - goniec, N - skoczek", "Q").toUpperCase();
-        }
-        this.promotePawn(this.fromSquare, this.toSquare, selectedPiece);
+        this.promotePawn(this.fromSquare, this.toSquare, "Q");
       } else {
         this.removeHighlights();
         this.fromSquare = null;
