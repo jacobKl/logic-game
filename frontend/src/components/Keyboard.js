@@ -27,18 +27,6 @@ export default class Keyboard {
       case KEYS.w:
         Config.moveForward = false;
         break;
-      case KEYS.left:
-      case KEYS.a:
-        Config.moveLeft = false;
-        break;
-      case KEYS.right:
-      case KEYS.d:
-        Config.moveRight = false;
-        break;
-      case KEYS.down:
-      case KEYS.s:
-        Config.moveBackward = false;
-        break;
     }
   }
 
@@ -47,22 +35,6 @@ export default class Keyboard {
       case KEYS.up:
       case KEYS.w:
         Config.moveForward = true;
-        break;
-      case KEYS.left:
-      case KEYS.a:
-        Config.moveLeft = true;
-        break;
-      case KEYS.right:
-      case KEYS.d:
-        Config.moveRight = true;
-        break;
-      case KEYS.right:
-      case KEYS.d:
-        Config.moveRight = true;
-        break;
-      case KEYS.down:
-      case KEYS.s:
-        Config.moveBackward = true;
         break;
     }
   }

@@ -24,7 +24,7 @@ export default class Main {
     this.renderer = new Renderer(container);
     this.camera = new Camera(90, window.screen.width, window.screen.height);
     this.camera.add(this.audioListener);
-    this.chessboard = new ChessBoard(this.scene, undefined, this.audioListener);
+    this.chessboard = new ChessBoard(this.scene, this.audioListener, false, undefined);
     this.player = new Player();
     this.enemy = new Player();
     this.room = new Room(this.scene);
@@ -64,7 +64,7 @@ export default class Main {
     this.scene.add(this.light);
 
     // MOVE DETECTION
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", () => {
       if (this.yourColor == this.nowPlaying) {
         this.chessboard.moveProxy(this.mouse, this.camera);
       }

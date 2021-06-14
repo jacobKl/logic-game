@@ -6,12 +6,12 @@ import MoveHighlight from "./MoveHighlight";
 import CustomPopUp from "./CustomPopUp";
 
 export default class Chessboard {
-  constructor(scene, fen, listener, isAnalize = false) {
+  constructor(scene, listener, isAnalize, pgn) {
     this.scene = scene;
     this.group = new Group();
     this.pieces = [];
-    this.fen = fen;
-    this.game = new Chess(fen);
+    this.game = new Chess();
+    this.pgn = pgn;
     this.fromSquare = null;
     this.toSquare = null;
     this.possible = null;
@@ -28,6 +28,10 @@ export default class Chessboard {
 
     if (!this.isAnalize) {
       this.customPopUp = new CustomPopUp(".end-game-notifier", ".close-notifier");
+    }
+
+    if (this.pgn) {
+      this.game.load_pgn(this.pgn);
     }
 
     const loader = new GLTFLoader();
@@ -171,7 +175,7 @@ export default class Chessboard {
       this.pieces[takenPiece].hide();
     }
     this.pieces[selectedPiece].square = to;
-    this.commitMove();
+    if (!this.isAnalize) this.commitMove();
   }
 
   promotePawn(from, to, pieceToPromoteTo) {
@@ -192,7 +196,7 @@ export default class Chessboard {
         .then(() => {
           newPiece.square = to;
           this.pieces.push(newPiece);
-          this.commitMove();
+          if (!this.isAnalize) this.commitMove();
         })
         .catch((err) => {
           console.error(err);
@@ -207,7 +211,7 @@ export default class Chessboard {
         .then(() => {
           newPiece.square = to;
           this.pieces.push(newPiece);
-          this.commitMove();
+          if (!this.isAnalize) this.commitMove();
         })
         .catch((err) => {
           console.error(err);
@@ -243,7 +247,7 @@ export default class Chessboard {
         this.pieces[rookIndex].square = "f8";
         break;
     }
-    this.commitMove();
+    if (!this.isAnalize) this.commitMove();
   }
 
   longCastle() {
@@ -274,7 +278,7 @@ export default class Chessboard {
         this.pieces[rookIndex].square = "d8";
         break;
     }
-    this.commitMove();
+    if (!this.isAnalize) this.commitMove();
   }
 
   commitMove() {
@@ -320,7 +324,54 @@ export default class Chessboard {
     }
 
     this.gameEnded = true;
-    this.storeInDb = { ago: new Date(), moves: this.game.history({ verbose: true }), fen: this.game.fen(), won: this.won, lost: this.lost };
+    this.storeInDb = { ago: new Date(), moves: this.game.history({ verbose: true }), fen: this.game.fen(), pgn: this.game.pgn(), won: this.won, lost: this.lost };
+  }
+
+  undoMove(shortCastle, longCastle) {
+    let color = this.game.turn();
+    let lastMove = this.game.undo();
+    if (lastMove != null) {
+      let selectedPiece = this.pieces.findIndex((piece) => {
+        return piece.square == lastMove.to;
+      });
+      if (shortCastle && this.game.turn() == "w") {
+        let rook = this.pieces.findIndex((piece) => {
+          return piece.square == "f1";
+        });
+        this.pieces[rook].square = "h1";
+      } else if (shortCastle && this.game.turn() == "b") {
+        let rook = this.pieces.findIndex((piece) => {
+          return piece.square == "f8";
+        });
+        this.pieces[rook].square = "h8";
+      } else if (longCastle && this.game.turn() == "w") {
+        let rook = this.pieces.findIndex((piece) => {
+          return piece.square == "c1";
+        });
+        this.pieces[rook].square = "a1";
+      } else if (longCastle && this.game.turn() == "b") {
+        let rook = this.pieces.findIndex((piece) => {
+          return piece.square == "c8";
+        });
+        this.pieces[rook].square = "a8";
+      }
+      this.pieces[selectedPiece].square = lastMove.from;
+      if (lastMove.captured) {
+        let piece = new ChessPiece(lastMove.captured, color, this.group, 0, 0);
+        piece
+          .loadModel()
+          .then(() => {
+            piece.square = lastMove.to;
+            this.pieces.push(piece);
+            this.updatePieces();
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        this.updatePieces();
+      }
+    }
   }
 
   updatePieces() {
