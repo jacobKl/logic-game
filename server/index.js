@@ -3,13 +3,7 @@ const app = express();
 const socket = require("socket.io");
 const session = require("express-session");
 const server = app.listen(3000);
-const cors = require("cors");
-const io = socket(server, {
-  cors: {
-    origin: "*",
-    credentials: true,
-  },
-});
+const io = socket(server);
 const { joinRoomHandler } = require("./handlers/joinRoomHandler");
 const { changePlayerData } = require("./handlers/changePlayerData");
 const { makeMove } = require("./handlers/makeMove");
@@ -28,7 +22,6 @@ const sessionMiddleware = session({
   saveUninitialized: true,
 });
 
-app.use(cors());
 app.use(express.static("static"));
 app.use(sessionMiddleware);
 app.set("view engine", "ejs");
